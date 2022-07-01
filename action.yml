@@ -4,6 +4,16 @@ inputs:
   DOCKER_IMAGE:
     description: "Image name to build"
     required: true
+  
+  context:
+    description: "Path to the directory where the Dockerfile is located"
+    default: "."
+    required: true
+  
+  file:
+    description: "Path to the Dockerfile"
+    required: true
+  
   Username:
     description: "Username for registry"
     required: true
@@ -63,8 +73,8 @@ runs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
-        context: .
-        file: build/app/Dockerfile
+        context: ${{ inputs.context }}
+        file: ${{ inputs.DOCKER_IMAGE }}
         push: true
         cache-from: |
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
