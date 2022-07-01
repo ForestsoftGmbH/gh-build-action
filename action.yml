@@ -1,0 +1,68 @@
+name: 'Docker Build Image'
+description: 'Build an docker image'
+inputs:
+  DOCKER_IMAGE:
+    description: "Image name to build"
+    required: true
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-number }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+    - name: Set outputs
+      shell: bash
+      id: vars
+      run: |
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        echo "::set-output name=DOCKER_IMAGE::${{ inputs.DOCKER_IMAGE }}"
+
+    - name: Set up Docker Context for Buildx
+      shell: bash
+      id: buildx-context
+      run: |
+        docker context create builders
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v2
+      with:
+        version: latest
+        endpoint: builders
+
+    - name: Inspect builder
+      shell: bash
+      run: |
+        echo "Name:      ${{ steps.buildx.outputs.name }}"
+        echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
+        echo "Status:    ${{ steps.buildx.outputs.status }}"
+        echo "Flags:     ${{ steps.buildx.outputs.flags }}"
+        echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ steps.vars.outputs.DOCKER_IMAGE }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: build/app/Dockerfile
+        push: true
+        cache-from: |
+          ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
+          ${{ steps.vars.outputs.DOCKER_IMAGE }}
+        tags: |
+          ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
+          ${{ steps.vars.outputs.DOCKER_IMAGE }}:latest
+        labels: ${{ steps.meta.outputs.labels }}
