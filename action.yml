@@ -4,6 +4,13 @@ inputs:
   DOCKER_IMAGE:
     description: "Image name to build"
     required: true
+  Username:
+    description: "Username for registry"
+    required: true
+  Password:
+    description: "Password for registry"
+    required: true    
+
 outputs:
   random-number:
     description: "Random number"
@@ -44,8 +51,8 @@ runs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        username: ${{ inputs.Username }}
+        password: ${{ inputs.Password }}
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
