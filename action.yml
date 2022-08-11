@@ -78,7 +78,13 @@ runs:
       uses: docker/metadata-action@v4
       with:
         images: ${{ steps.vars.outputs.DOCKER_IMAGE }}
-
+    
+    - name: Try to pull Image 
+      shell: bash
+      run: |
+        docker pull ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }} || true
+        docker pull ${{ steps.vars.outputs.DOCKER_IMAGE }} || true
+    
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
