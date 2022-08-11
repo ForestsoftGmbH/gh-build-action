@@ -21,9 +21,14 @@ inputs:
   Username:
     description: "Username for registry"
     required: true
+  
   Password:
     description: "Password for registry"
     required: true    
+  
+  build-args:
+    description: "Build args as json array"
+    required: false
 
 outputs:
   random-number:
@@ -80,6 +85,9 @@ runs:
         context: ${{ inputs.context }}
         file: ${{ inputs.file }}
         push: true
+        pull: true
+        build-args: |
+          ${{ steps.vars.outputs.BUILD_ARGS }}
         cache-from: |
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
           ${{ steps.vars.outputs.DOCKER_IMAGE }}
