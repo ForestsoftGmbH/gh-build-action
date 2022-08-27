@@ -78,7 +78,13 @@ runs:
       uses: docker/metadata-action@v4
       with:
         images: ${{ steps.vars.outputs.DOCKER_IMAGE }}
-    
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
@@ -88,8 +94,8 @@ runs:
         pull: true
         build-args: |
           ${{ steps.vars.outputs.BUILD_ARGS }}
-        cache-from: |
-          ${{ steps.vars.outputs.DOCKER_IMAGE }}
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache-new
         tags: |
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:latest
