@@ -95,7 +95,7 @@ runs:
         build-args: |
           ${{ steps.vars.outputs.BUILD_ARGS }}
         cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache-new
+        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
         tags: |
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:latest
