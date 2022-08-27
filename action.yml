@@ -82,9 +82,9 @@ runs:
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        key: ${{ runner.os }}-buildx-${{ steps.vars.outputs.DOCKER_IMAGE }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-buildx-
+          ${{ runner.os }}-buildx-${{ steps.vars.outputs.DOCKER_IMAGE }}-
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
