@@ -18,6 +18,11 @@ inputs:
     description: "Path to the Dockerfile"
     required: true
   
+  target:
+    description: "Target to build"
+    default: ""
+    required: false
+  
   Username:
     description: "Username for registry"
     required: true
@@ -44,6 +49,7 @@ runs:
       run: |
         echo "::set-output name=sha_short::${{ inputs.DOCKER_TAG }}"
         echo "::set-output name=DOCKER_IMAGE::${{ inputs.DOCKER_IMAGE }}"
+        echo "::set-output name=BUILD_ARGS::${{ inputs.build-args }}"
 
     - name: Set up Docker Context for Buildx
       shell: bash
@@ -92,6 +98,7 @@ runs:
         file: ${{ inputs.file }}
         push: true
         pull: true
+        target: "${{inputs.target}}"
         build-args: |
           ${{ steps.vars.outputs.BUILD_ARGS }}
         cache-from: type=local,src=/tmp/.buildx-cache
