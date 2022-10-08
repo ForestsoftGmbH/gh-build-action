@@ -55,7 +55,7 @@ runs:
       shell: bash
       id: buildx-context
       run: |
-        docker context create builders
+        docker context inspect builders || docker context create builders
 
     - name: Set up Docker Buildx
       id: buildx
@@ -84,13 +84,6 @@ runs:
       uses: docker/metadata-action@v4
       with:
         images: ${{ steps.vars.outputs.DOCKER_IMAGE }}
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ steps.vars.outputs.DOCKER_IMAGE }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-${{ steps.vars.outputs.DOCKER_IMAGE }}-
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
@@ -101,15 +94,9 @@ runs:
         target: "${{inputs.target}}"
         build-args: |
           ${{ steps.vars.outputs.BUILD_ARGS }}
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+        cache-from: type=registry,ref=${{ inputs.DOCKER_IMAGE }}:latest
+        cache-to: type=inline
         tags: |
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:latest
         labels: ${{ steps.meta.outputs.labels }}
-   
-    - name: Move cache
-      shell: bash
-      run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
