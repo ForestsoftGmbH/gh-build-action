@@ -57,10 +57,9 @@ runs:
       shell: bash
       id: vars
       run: |
-        echo "::set-output name=sha_short::${{ inputs.DOCKER_TAG }}"
-        echo "::set-output name=DOCKER_IMAGE::${{ inputs.DOCKER_IMAGE }}"
-        echo "::set-output name=BUILD_ARGS::${{ inputs.build-args }}"
-
+        echo "docker_tag=${{ inputs.DOCKER_TAG }}" >> $GITHUB_OUTPUT
+        echo "DOCKER_IMAGE=${{ inputs.DOCKER_IMAGE }}" >> $GITHUB_OUTPUT
+        echo "BUILD_ARGS=${{ inputs.build-args }}" >> $GITHUB_OUTPUT
     - name: Set up Docker Context for Buildx
       shell: bash
       id: buildx-context
