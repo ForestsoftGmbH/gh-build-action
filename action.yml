@@ -116,6 +116,6 @@ runs:
         cache-from: type=registry,ref=${{ inputs.DOCKER_IMAGE }}:latest
         cache-to: type=inline
         tags: |
-          ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
+          ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.docker_tag }}
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:latest
         labels: ${{ steps.meta.outputs.labels }}
