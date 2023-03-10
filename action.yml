@@ -9,6 +9,10 @@ inputs:
     description: "Tag name to build"
     required: true
   
+  COMPOSER_AUTH_JSON:
+    description: "base64 string of auth.json for composer"
+    required: false
+
   context:
     description: "Path to the directory where the Dockerfile is located"
     default: "."
@@ -53,6 +57,12 @@ runs:
         fi
     - uses: actions/checkout@v3
       if: steps.check.outputs.checkout == 'true'
+    - name: Set composer auth
+      shell: bash
+      if: inputs.COMPOSER_AUTH_JSON != ''
+      id: composer_auth
+      run: |
+        echo -n "${{ inputs.COMPOSER_AUTH_JSON }}" | base64 --decode > ${{matrix.context}}/auth.json
     - name: Set outputs
       shell: bash
       id: vars
