@@ -62,7 +62,7 @@ runs:
       if: inputs.COMPOSER_AUTH_JSON != ''
       id: composer_auth
       run: |
-        echo -n "${{ inputs.COMPOSER_AUTH_JSON }}" | base64 --decode > ${{matrix.context}}/auth.json
+        echo -n "${{ inputs.COMPOSER_AUTH_JSON }}" | base64 --decode > ./auth.json
     - name: Set outputs
       shell: bash
       id: vars
