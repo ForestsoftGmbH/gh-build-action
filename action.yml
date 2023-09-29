@@ -27,6 +27,10 @@ inputs:
     default: ""
     required: false
   
+  Registry:
+    description: "Registry to use"
+    default: "docker.io"
+    required: false
   Username:
     description: "Username for registry"
     required: true
@@ -93,10 +97,18 @@ runs:
         echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
 
     - name: Log in to Docker Hub
+      if: inputs.Registry == 'docker.io'
       uses: docker/login-action@v2
       with:
         username: ${{ inputs.Username }}
         password: ${{ inputs.Password }}
+
+    - name: Log in to Docker Registry
+      if: inputs.Registry !== 'docker.io'
+      shell: bash
+      run: |
+        echo "${{ inputs.Password }}" | docker login -u "${{ inputs.Username }}" --password-stdin "${{ inputs.Registry }}"
+        
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
