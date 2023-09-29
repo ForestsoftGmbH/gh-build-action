@@ -72,7 +72,7 @@ runs:
       id: vars
       run: |
         echo "docker_tag=${{ inputs.DOCKER_TAG }}" >> $GITHUB_OUTPUT
-        echo "DOCKER_IMAGE=${{ inputs.DOCKER_IMAGE }}" >> $GITHUB_OUTPUT
+        echo "DOCKER_IMAGE=$(echo "${{ inputs.DOCKER_IMAGE }}" | sed -e 's/\(.*\)/\L\1/')" >> $GITHUB_OUTPUT
         echo "BUILD_ARGS=${{ inputs.build-args }}" >> $GITHUB_OUTPUT
     - name: Set up Docker Context for Buildx
       shell: bash
