@@ -104,7 +104,7 @@ runs:
         password: ${{ inputs.Password }}
 
     - name: Log in to Docker Registry
-      if: inputs.Registry !== 'docker.io'
+      if: inputs.Registry != 'docker.io'
       shell: bash
       run: |
         echo "${{ inputs.Password }}" | docker login -u "${{ inputs.Username }}" --password-stdin "${{ inputs.Registry }}"
