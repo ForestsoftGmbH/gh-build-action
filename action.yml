@@ -125,7 +125,7 @@ runs:
         target: "${{inputs.target}}"
         build-args: |
           ${{ steps.vars.outputs.BUILD_ARGS }}
-        cache-from: type=registry,ref=${{ inputs.DOCKER_IMAGE }}:latest
+        cache-from: type=registry,ref=${{ steps.vars.outputs.DOCKER_IMAGE }}:latest
         cache-to: type=inline
         tags: |
           ${{ steps.vars.outputs.DOCKER_IMAGE }}:${{ steps.vars.outputs.docker_tag }}
