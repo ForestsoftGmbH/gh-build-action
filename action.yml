@@ -47,9 +47,9 @@ outputs:
   random-number:
     description: "Random number"
     value: ${{ steps.random-number-generator.outputs.random-number }}
-  image-labels:
+  image-digest:
     description: "labels of the image"
-    value: ${{ steps.meta.outputs.labels }}
+    value: ${{ steps.docker_build.outputs.digest }}
 runs:
   using: "composite"
   steps:
@@ -120,6 +120,7 @@ runs:
         images: ${{ steps.vars.outputs.DOCKER_IMAGE }}
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
+      id: docker_build
       with:
         context: ${{ inputs.context }}
         file: ${{ inputs.file }}
