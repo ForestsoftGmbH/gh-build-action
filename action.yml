@@ -47,6 +47,9 @@ outputs:
   random-number:
     description: "Random number"
     value: ${{ steps.random-number-generator.outputs.random-number }}
+  image-labels:
+    description: "labels of the image"
+    value: ${{ steps.meta.outputs.labels }}
 runs:
   using: "composite"
   steps:
